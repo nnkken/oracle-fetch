@@ -11,7 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5"
 
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth"
 	"github.com/nnkken/oracle-fetch/db"
@@ -75,11 +75,11 @@ var FetchCmd = &cobra.Command{
 			return err
 		}
 
-		connPool, err := pgxpool.New(context.Background(), dbURL)
+		conn, err := pgx.Connect(context.Background(), dbURL)
 		if err != nil {
 			return err
 		}
-		defer connPool.Close()
+		defer conn.Close(context.Background())
 
 		// TODO: integrate rate limiter
 		client, err := ethclient.Dial(ethEndpoint)
@@ -97,7 +97,7 @@ var FetchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		runner.Run(dataSources, fetchInterval, connPool)
+		runner.Run(dataSources, fetchInterval, conn)
 		return nil
 	},
 }

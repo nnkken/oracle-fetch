@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5"
 
 	"go.uber.org/ratelimit"
 
@@ -34,14 +34,8 @@ func RunFetchLoop(dataSources []types.DataSource, interval time.Duration, output
 	}
 }
 
-func RunInsertLoop(pool *pgxpool.Pool, ch <-chan types.DBEntry) {
+func RunInsertLoop(conn *pgx.Conn, ch <-chan types.DBEntry) {
 	log := logger.GetLogger("insert_loop")
-	conn, err := pool.Acquire(context.Background())
-	if err != nil {
-		log.Panicw("failed to acquire database connection", "error", err)
-	}
-	defer conn.Release()
-
 	for entry := range ch {
 		_, err := conn.Exec(context.Background(), `
 			INSERT INTO prices (token, unit, price, price_timestamp, fetch_timestamp)
@@ -54,8 +48,8 @@ func RunInsertLoop(pool *pgxpool.Pool, ch <-chan types.DBEntry) {
 	}
 }
 
-func Run(dataSources []types.DataSource, interval time.Duration, pool *pgxpool.Pool) {
+func Run(dataSources []types.DataSource, interval time.Duration, conn *pgx.Conn) {
 	ch := make(chan types.DBEntry)
 	go RunFetchLoop(dataSources, interval, ch)
-	RunInsertLoop(pool, ch)
+	RunInsertLoop(conn, ch)
 }
