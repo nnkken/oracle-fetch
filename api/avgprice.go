@@ -1,4 +1,4 @@
-package avgprice
+package api
 
 import (
 	"context"
@@ -8,8 +8,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/nnkken/oracle-fetch/api/utils"
 )
 
 type AvgPriceRequest struct {
@@ -43,8 +41,8 @@ func HandleAvgPriceRequest(c *gin.Context) {
 		c.AbortWithStatusJSON(400, gin.H{"error": "'from' must be before 'to'"})
 		return
 	}
-	res, err := QueryAvgPrice(q, utils.GetConn(c))
-	if ok := utils.HandleDBError(c, err); !ok {
+	res, err := QueryAvgPrice(q, GetConn(c))
+	if ok := HandleDBError(c, err); !ok {
 		return
 	}
 	c.JSON(200, res)

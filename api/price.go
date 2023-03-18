@@ -1,4 +1,4 @@
-package price
+package api
 
 import (
 	"context"
@@ -7,8 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-
-	"github.com/nnkken/oracle-fetch/api/utils"
 )
 
 type PriceRequest struct {
@@ -35,8 +33,8 @@ func HandlePriceRequest(c *gin.Context) {
 		q.Timestamp = time.Now()
 	}
 	q.Timestamp = q.Timestamp.UTC()
-	res, err := QueryPrice(q, utils.GetConn(c))
-	if ok := utils.HandleDBError(c, err); !ok {
+	res, err := QueryPrice(q, GetConn(c))
+	if ok := HandleDBError(c, err); !ok {
 		return
 	}
 	c.JSON(200, res)
