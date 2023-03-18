@@ -49,7 +49,6 @@ func HandleAvgPriceRequest(c *gin.Context) {
 }
 
 func QueryAvgPrice(q AvgPriceRequest, conn *pgxpool.Conn) (AvgPriceResponse, error) {
-	// TODO: when no data is available, null happens for the fields, which makes Scan return error and cause 500
 	row := conn.QueryRow(
 		context.Background(),
 		`
@@ -72,7 +71,6 @@ func QueryAvgPrice(q AvgPriceRequest, conn *pgxpool.Conn) (AvgPriceResponse, err
 	}
 	err := row.Scan(&res.AvgPrice, &res.PriceCount, &res.FirstFetchTimestamp, &res.LastFetchTimestamp)
 	if err != nil {
-		// TODO: log
 		return AvgPriceResponse{}, err
 	}
 	if res.PriceCount == 0 {

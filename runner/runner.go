@@ -2,17 +2,18 @@ package runner
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/nnkken/oracle-fetch/types"
-
 	"go.uber.org/ratelimit"
+
+	"github.com/nnkken/oracle-fetch/logger"
+	"github.com/nnkken/oracle-fetch/types"
 )
 
 func RunFetchLoop(dataSources []types.DataSource, interval time.Duration, output chan<- types.DBEntry) {
+	log := logger.GetLogger("fetch_loop")
 	limiter := ratelimit.New(10)
 	timech := time.Tick(interval)
 	for ; true; <-timech {
@@ -22,7 +23,7 @@ func RunFetchLoop(dataSources []types.DataSource, interval time.Duration, output
 				limiter.Take()
 				dbentries, err := datasource.Fetch()
 				if err != nil {
-					// TODO: log
+					log.Errorw("failed to fetch data", "error", err)
 					return
 				}
 				for _, dbentry := range dbentries {
@@ -34,23 +35,22 @@ func RunFetchLoop(dataSources []types.DataSource, interval time.Duration, output
 }
 
 func RunInsertLoop(pool *pgxpool.Pool, ch <-chan types.DBEntry) {
+	log := logger.GetLogger("insert_loop")
 	conn, err := pool.Acquire(context.Background())
 	if err != nil {
-		panic(err)
+		log.Panicw("failed to acquire database connection", "error", err)
 	}
 	defer conn.Release()
 
 	for entry := range ch {
-		now := time.Now().UTC().Format(time.RFC3339)
 		_, err := conn.Exec(context.Background(), `
 			INSERT INTO prices (token, unit, price, price_timestamp, fetch_timestamp)
 			VALUES ($1, $2, $3, $4, $5)
 		`, entry.Token, entry.Unit, entry.Price, entry.PriceTimestamp, entry.FetchTimestamp)
 		if err != nil {
-			// TODO: non-critical, log error and ignore instead of panic
-			panic(err)
+			log.Errorw("failed to insert entry into database", "error", err, "entry", entry)
 		}
-		fmt.Printf("%s - %##v\n", now, entry)
+		log.Infow("inserted entry into database", "entry", entry)
 	}
 }
 
