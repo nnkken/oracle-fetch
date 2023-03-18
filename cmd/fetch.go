@@ -14,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth"
+	"github.com/nnkken/oracle-fetch/db"
 	"github.com/nnkken/oracle-fetch/runner"
 	"github.com/nnkken/oracle-fetch/types"
 )
@@ -92,6 +93,10 @@ var FetchCmd = &cobra.Command{
 			return err
 		}
 
+		err = db.RunMigrations(dbURL)
+		if err != nil {
+			return err
+		}
 		runner.Run(dataSources, fetchInterval, connPool)
 		return nil
 	},

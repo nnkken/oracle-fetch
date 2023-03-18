@@ -40,20 +40,6 @@ func RunInsertLoop(pool *pgxpool.Pool, ch <-chan types.DBEntry) {
 	}
 	defer conn.Release()
 
-	// TODO: use some migration tool to manage this
-	_, err = conn.Exec(context.Background(), `
-		CREATE TABLE IF NOT EXISTS prices (
-			id SERIAL PRIMARY KEY,
-			token TEXT,
-			unit TEXT,
-			price NUMERIC,
-			price_timestamp TIMESTAMP WITH TIME ZONE,
-			fetch_timestamp TIMESTAMP WITH TIME ZONE
-		)
-	`)
-	if err != nil {
-		panic(err)
-	}
 	for entry := range ch {
 		now := time.Now().UTC().Format(time.RFC3339)
 		_, err := conn.Exec(context.Background(), `
