@@ -14,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth"
+	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth/contract"
 	"github.com/nnkken/oracle-fetch/db"
 	"github.com/nnkken/oracle-fetch/runner"
 	"github.com/nnkken/oracle-fetch/types"
@@ -28,27 +29,28 @@ const (
 type ChainLinkJsonEntry struct {
 	Token    string `json:"token"`
 	Unit     string `json:"unit"`
-	Decimals int    `json:"decimals"`
+	Decimals uint8  `json:"decimals"`
 	Address  string `json:"address"`
 }
 
 func initChainLinkETH(chainLinkFile string, client *ethclient.Client) ([]types.DataSource, error) {
 	bz, err := os.ReadFile(chainLinkFile)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	var entries []ChainLinkJsonEntry
 	err = json.Unmarshal(bz, &entries)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	dataSources := make([]types.DataSource, len(entries))
 	for i, entry := range entries {
-		dataSource, err := chainlink.NewChainLinkETHSource(client, common.HexToAddress(entry.Address), entry.Token, entry.Unit, entry.Decimals)
+		contractInstance, err := contract.NewContract(common.HexToAddress(entry.Address), client)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
+		dataSource := chainlink.NewChainLinkETHSource(contractInstance, entry.Token, entry.Unit, entry.Decimals)
 		dataSources[i] = dataSource
 	}
 	return dataSources, nil

@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -29,19 +30,26 @@ type AvgPriceResponse struct {
 	LastFetchTimestamp  time.Time `json:"last_price_timestamp"`
 }
 
+func ParseAvgPriceRequest(c *gin.Context) (AvgPriceRequest, error) {
+	var req AvgPriceRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		return AvgPriceRequest{}, fmt.Errorf("fail to parse avg_price request: %w", err)
+	}
+	req.From = req.From.UTC()
+	req.To = req.To.UTC()
+	if req.From.After(req.To) {
+		return AvgPriceRequest{}, fmt.Errorf("'from' must be before 'to'")
+	}
+	return req, nil
+}
+
 func HandleAvgPriceRequest(c *gin.Context) {
-	var q AvgPriceRequest
-	if err := c.ShouldBindQuery(&q); err != nil {
+	req, err := ParseAvgPriceRequest(c)
+	if err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	q.From = q.From.UTC()
-	q.To = q.To.UTC()
-	if q.From.After(q.To) {
-		c.AbortWithStatusJSON(400, gin.H{"error": "'from' must be before 'to'"})
-		return
-	}
-	res, err := QueryAvgPrice(q, GetConn(c))
+	res, err := QueryAvgPrice(req, GetConn(c))
 	if ok := HandleDBError(c, err); !ok {
 		return
 	}

@@ -2,9 +2,10 @@ package api
 
 import (
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/nnkken/oracle-fetch/logger"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/nnkken/oracle-fetch/logger"
 )
 
 func NewRouter(connPool *pgxpool.Pool) *gin.Engine {

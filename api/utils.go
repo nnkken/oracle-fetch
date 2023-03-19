@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"net/http"
+	"net/url"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -50,4 +52,17 @@ func WithPool(pool *pgxpool.Pool) gin.HandlerFunc {
 
 func GetConn(c *gin.Context) *pgxpool.Conn {
 	return c.MustGet("conn").(*pgxpool.Conn)
+}
+
+// for testing
+func newContextWithUrl(requestURL string) *gin.Context {
+	u, err := url.Parse(requestURL)
+	if err != nil {
+		panic(err)
+	}
+	return &gin.Context{
+		Request: &http.Request{
+			URL: u,
+		},
+	}
 }

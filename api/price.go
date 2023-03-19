@@ -2,11 +2,14 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/nnkken/oracle-fetch/utils"
 )
 
 type PriceRequest struct {
@@ -23,17 +26,25 @@ type PriceResponse struct {
 	FetchTimestamp time.Time `json:"fetch_timestamp"`
 }
 
+func ParsePriceRequest(c *gin.Context) (PriceRequest, error) {
+	var req PriceRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		return PriceRequest{}, fmt.Errorf("fail to parse price request: %w", err)
+	}
+	if req.Timestamp.IsZero() {
+		req.Timestamp = utils.TimeNow()
+	}
+	req.Timestamp = req.Timestamp.UTC()
+	return req, nil
+}
+
 func HandlePriceRequest(c *gin.Context) {
-	var q PriceRequest
-	if err := c.ShouldBindQuery(&q); err != nil {
+	req, err := ParsePriceRequest(c)
+	if err != nil {
 		c.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	if q.Timestamp.IsZero() {
-		q.Timestamp = time.Now()
-	}
-	q.Timestamp = q.Timestamp.UTC()
-	res, err := QueryPrice(q, GetConn(c))
+	res, err := QueryPrice(req, GetConn(c))
 	if ok := HandleDBError(c, err); !ok {
 		return
 	}
