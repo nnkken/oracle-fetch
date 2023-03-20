@@ -1,5 +1,5 @@
 services:
-  db:
+  postgres:
     image: postgres:15
     shm_size: 1g
     environment:
@@ -8,7 +8,7 @@ services:
       POSTGRES_DB: postgres
   api:
     depends_on:
-      - db
+      - postgres
     build: "."
     ports:
       - "8080:8080"
@@ -19,7 +19,7 @@ services:
     ]
   fetcher:
     depends_on:
-      - db
+      - postgres
     build: "."
     command: [
       "oracle-fetch", "fetch",
