@@ -26,7 +26,7 @@ func TestChainLinkETHSource(t *testing.T) {
 
 	source := NewChainLinkETHSource(mockInstance, token, unit, decimals)
 
-	mockCall := mockInstance.On("LatestRoundData", (*bind.CallOpts)(nil)).Return(RoundData{
+	mockCall := mockInstance.EXPECT().LatestRoundData((*bind.CallOpts)(nil)).Return(RoundData{
 		Answer:    big.NewInt(1e10),
 		StartedAt: big.NewInt(1000000000),
 		UpdatedAt: big.NewInt(1234567890),
@@ -45,14 +45,14 @@ func TestChainLinkETHSource(t *testing.T) {
 	mockCall.Unset()
 
 	expectedErr := errors.New("err")
-	mockCall = mockInstance.On("LatestRoundData", (*bind.CallOpts)(nil)).Return(RoundData{}, expectedErr)
+	mockCall = mockInstance.EXPECT().LatestRoundData((*bind.CallOpts)(nil)).Return(RoundData{}, expectedErr)
 	_, err = source.Fetch()
 	require.ErrorIs(t, err, expectedErr)
 	mockCall.Unset()
 
 	decimals = uint8(10)
 	source = NewChainLinkETHSource(mockInstance, token, unit, decimals)
-	mockCall = mockInstance.On("LatestRoundData", (*bind.CallOpts)(nil)).Return(RoundData{
+	mockCall = mockInstance.EXPECT().LatestRoundData((*bind.CallOpts)(nil)).Return(RoundData{
 		Answer:    big.NewInt(1e10),
 		StartedAt: big.NewInt(1000000000),
 		UpdatedAt: big.NewInt(1234567890),
@@ -71,7 +71,7 @@ func TestChainLinkETHSource(t *testing.T) {
 
 	decimals = uint8(6)
 	source = NewChainLinkETHSource(mockInstance, token, unit, decimals)
-	mockCall = mockInstance.On("LatestRoundData", (*bind.CallOpts)(nil)).Return(RoundData{
+	mockCall = mockInstance.EXPECT().LatestRoundData((*bind.CallOpts)(nil)).Return(RoundData{
 		Answer:    big.NewInt(1e10),
 		StartedAt: big.NewInt(1000000000),
 		UpdatedAt: big.NewInt(1234567890),

@@ -1,5 +1,5 @@
 inpackage: True
 recursive: True
-testonly: True
+testonly: False # for cross package access
 with-expecter: True
 keeptree: False

@@ -7,12 +7,14 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"go.uber.org/ratelimit"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 
 	"github.com/jackc/pgx/v5"
 
+	"github.com/nnkken/oracle-fetch/datasource"
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth"
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth/contract"
 	"github.com/nnkken/oracle-fetch/db"
@@ -44,6 +46,8 @@ func initChainLinkETH(chainLinkFile string, client *ethclient.Client) ([]types.D
 		return nil, err
 	}
 
+	// TODO: make the rate limit configurable
+	limiter := ratelimit.New(10)
 	dataSources := make([]types.DataSource, len(entries))
 	for i, entry := range entries {
 		contractInstance, err := contract.NewContract(common.HexToAddress(entry.Address), client)
@@ -51,7 +55,8 @@ func initChainLinkETH(chainLinkFile string, client *ethclient.Client) ([]types.D
 			return nil, err
 		}
 		dataSource := chainlink.NewChainLinkETHSource(contractInstance, entry.Token, entry.Unit, entry.Decimals)
-		dataSources[i] = dataSource
+		limited := datasource.NewRateLimitDataSource(dataSource, limiter)
+		dataSources[i] = limited
 	}
 	return dataSources, nil
 }
@@ -83,7 +88,6 @@ var FetchCmd = &cobra.Command{
 		}
 		defer conn.Close(context.Background())
 
-		// TODO: integrate rate limiter
 		client, err := ethclient.Dial(ethEndpoint)
 		if err != nil {
 			return err
@@ -99,7 +103,13 @@ var FetchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		runner.Run(dataSources, fetchInterval, conn)
+
+		fetchLoop := runner.NewFetchLoop(fetchInterval)
+		insertLoop := runner.NewInsertLoop()
+		ch := make(chan types.DBEntry)
+
+		go fetchLoop.Run(dataSources, ch)
+		insertLoop.Run(conn, ch)
 		return nil
 	},
 }
