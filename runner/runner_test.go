@@ -36,8 +36,8 @@ func TestInsert(t *testing.T) {
 	conn := db.SetupTestConn(t)
 	defer conn.Close(context.Background())
 
-	insert(testEntries[0], conn, zap.S())
-	insert(testEntries[1], conn, zap.S())
+	Insert(testEntries[0], conn, zap.S())
+	Insert(testEntries[1], conn, zap.S())
 
 	rows, err := conn.Query(context.Background(), "SELECT token, unit, price, price_timestamp, fetch_timestamp FROM prices ORDER BY id")
 	require.NoError(t, err)

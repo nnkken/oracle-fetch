@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5"
 
 	"github.com/nnkken/oracle-fetch/utils"
 )
@@ -51,7 +51,7 @@ func HandlePriceRequest(c *gin.Context) {
 	c.JSON(200, res)
 }
 
-func QueryPrice(q PriceRequest, conn *pgxpool.Conn) (PriceResponse, error) {
+func QueryPrice(q PriceRequest, conn *pgx.Conn) (PriceResponse, error) {
 	row := conn.QueryRow(
 		context.Background(),
 		`SELECT price, price_timestamp, fetch_timestamp FROM prices

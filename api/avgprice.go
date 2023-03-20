@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/gin-gonic/gin"
 )
@@ -56,7 +55,7 @@ func HandleAvgPriceRequest(c *gin.Context) {
 	c.JSON(200, res)
 }
 
-func QueryAvgPrice(q AvgPriceRequest, conn *pgxpool.Conn) (AvgPriceResponse, error) {
+func QueryAvgPrice(q AvgPriceRequest, conn *pgx.Conn) (AvgPriceResponse, error) {
 	row := conn.QueryRow(
 		context.Background(),
 		`

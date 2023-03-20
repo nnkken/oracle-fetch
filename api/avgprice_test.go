@@ -1,9 +1,11 @@
 package api
 
 import (
+	"strconv"
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/require"
 )
 
@@ -72,5 +74,164 @@ func TestHandleAvgPriceRequest(t *testing.T) {
 }
 
 func TestQueryAvgPrice(t *testing.T) {
-	// TODO
+	conn := setupTestData(t)
+	res, err := QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "USD",
+		From:  time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+		To:    time.Date(2000, 1, 2, 0, 0, 0, 0, time.UTC),
+	}, conn)
+	require.NoError(t, err)
+	require.Equal(t, "BTC", res.Token)
+	require.Equal(t, "USD", res.Unit)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 1, 0, time.UTC), res.FirstFetchTimestamp)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.LastFetchTimestamp)
+	require.Equal(t, uint(6), res.PriceCount)
+	priceFloat, err := strconv.ParseFloat(res.AvgPrice, 64)
+	require.NoError(t, err)
+	require.Equal(t, float64(12400e8), priceFloat)
+
+	res, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "USD",
+		From:  time.Date(2000, 1, 1, 0, 0, 1, 0, time.UTC),
+		To:    time.Date(2000, 1, 1, 0, 0, 5, 0, time.UTC),
+	}, conn)
+	require.NoError(t, err)
+	require.Equal(t, "BTC", res.Token)
+	require.Equal(t, "USD", res.Unit)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 1, 0, time.UTC), res.FirstFetchTimestamp)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 5, 0, time.UTC), res.LastFetchTimestamp)
+	require.Equal(t, uint(3), res.PriceCount)
+	priceFloat, err = strconv.ParseFloat(res.AvgPrice, 64)
+	require.NoError(t, err)
+	require.Equal(t, float64((12000e8+12000e8+12500e8)/3), priceFloat)
+
+	res, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "ETH",
+		Unit:  "USD",
+		From:  time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+		To:    time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
+	}, conn)
+	require.NoError(t, err)
+	require.Equal(t, "ETH", res.Token)
+	require.Equal(t, "USD", res.Unit)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 3, 0, time.UTC), res.FirstFetchTimestamp)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 8, 0, time.UTC), res.LastFetchTimestamp)
+	require.Equal(t, uint(4), res.PriceCount)
+	priceFloat, err = strconv.ParseFloat(res.AvgPrice, 64)
+	require.NoError(t, err)
+	require.Equal(t, float64(2050e8), priceFloat)
+
+	_, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "HKD",
+		From:  time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+		To:    time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
+	}, conn)
+	require.ErrorIs(t, err, pgx.ErrNoRows)
+
+	_, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "USDT",
+		Unit:  "USD",
+		From:  time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+		To:    time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
+	}, conn)
+	require.ErrorIs(t, err, pgx.ErrNoRows)
+
+	_, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "USD",
+		From:  time.Date(2000, 1, 1, 0, 0, 11, 0, time.UTC),
+		To:    time.Date(2000, 1, 1, 0, 0, 12, 0, time.UTC),
+	}, conn)
+	require.ErrorIs(t, err, pgx.ErrNoRows)
+
+	_, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "USD",
+		From:  time.Date(1999, 1, 1, 0, 0, 0, 0, time.UTC),
+		To:    time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+	}, conn)
+	require.ErrorIs(t, err, pgx.ErrNoRows)
+
+	res, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "USD",
+		From:  time.Date(1999, 1, 1, 0, 0, 0, 0, time.UTC),
+		To:    time.Date(2000, 1, 1, 0, 0, 1, 0, time.UTC),
+	}, conn)
+	require.NoError(t, err)
+	require.Equal(t, "BTC", res.Token)
+	require.Equal(t, "USD", res.Unit)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 1, 0, time.UTC), res.FirstFetchTimestamp)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 1, 0, time.UTC), res.LastFetchTimestamp)
+	require.Equal(t, uint(1), res.PriceCount)
+	priceFloat, err = strconv.ParseFloat(res.AvgPrice, 64)
+	require.NoError(t, err)
+	require.Equal(t, float64(12000e8), priceFloat)
+
+	res, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "USD",
+		From:  time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
+		To:    time.Date(2001, 1, 1, 0, 0, 0, 0, time.UTC),
+	}, conn)
+	require.NoError(t, err)
+	require.Equal(t, "BTC", res.Token)
+	require.Equal(t, "USD", res.Unit)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.FirstFetchTimestamp)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.LastFetchTimestamp)
+	require.Equal(t, uint(1), res.PriceCount)
+	priceFloat, err = strconv.ParseFloat(res.AvgPrice, 64)
+	require.NoError(t, err)
+	require.Equal(t, float64(12700e8), priceFloat)
+
+	res, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "USD",
+		From:  time.Date(2000, 1, 1, 8, 0, 10, 0, time.FixedZone("HKT", 8*60*60)),
+		To:    time.Date(2001, 1, 1, 0, 0, 0, 0, time.UTC),
+	}, conn)
+	require.NoError(t, err)
+	require.Equal(t, "BTC", res.Token)
+	require.Equal(t, "USD", res.Unit)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.FirstFetchTimestamp)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.LastFetchTimestamp)
+	require.Equal(t, uint(1), res.PriceCount)
+	priceFloat, err = strconv.ParseFloat(res.AvgPrice, 64)
+	require.NoError(t, err)
+	require.Equal(t, float64(12700e8), priceFloat)
+
+	res, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "USD",
+		From:  time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
+		To:    time.Date(2001, 1, 1, 8, 0, 0, 0, time.FixedZone("HKT", 8*60*60)),
+	}, conn)
+	require.NoError(t, err)
+	require.Equal(t, "BTC", res.Token)
+	require.Equal(t, "USD", res.Unit)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.FirstFetchTimestamp)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.LastFetchTimestamp)
+	require.Equal(t, uint(1), res.PriceCount)
+	priceFloat, err = strconv.ParseFloat(res.AvgPrice, 64)
+	require.NoError(t, err)
+	require.Equal(t, float64(12700e8), priceFloat)
+
+	res, err = QueryAvgPrice(AvgPriceRequest{
+		Token: "BTC",
+		Unit:  "USD",
+		From:  time.Date(2000, 1, 1, 8, 0, 10, 0, time.FixedZone("HKT", 8*60*60)),
+		To:    time.Date(2001, 1, 1, 8, 0, 0, 0, time.FixedZone("HKT", 8*60*60)),
+	}, conn)
+	require.NoError(t, err)
+	require.Equal(t, "BTC", res.Token)
+	require.Equal(t, "USD", res.Unit)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.FirstFetchTimestamp)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.LastFetchTimestamp)
+	require.Equal(t, uint(1), res.PriceCount)
+	priceFloat, err = strconv.ParseFloat(res.AvgPrice, 64)
+	require.NoError(t, err)
+	require.Equal(t, float64(12700e8), priceFloat)
 }

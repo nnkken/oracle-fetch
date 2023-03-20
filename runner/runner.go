@@ -49,13 +49,14 @@ func NewInsertLoop() *InsertLoop {
 	return &InsertLoop{}
 }
 
-func insert(entry types.DBEntry, conn *pgx.Conn, log *zap.SugaredLogger) {
+func Insert(entry types.DBEntry, conn *pgx.Conn, log *zap.SugaredLogger) {
 	_, err := conn.Exec(context.Background(), `
 			INSERT INTO prices (token, unit, price, price_timestamp, fetch_timestamp)
 			VALUES ($1, $2, $3, $4, $5)
 		`, entry.Token, entry.Unit, entry.Price, entry.PriceTimestamp, entry.FetchTimestamp)
 	if err != nil {
 		log.Errorw("failed to insert entry into database", "error", err, "entry", entry)
+		return
 	}
 	log.Infow("inserted entry into database", "entry", entry)
 }
@@ -63,6 +64,6 @@ func insert(entry types.DBEntry, conn *pgx.Conn, log *zap.SugaredLogger) {
 func (loop *InsertLoop) Run(conn *pgx.Conn, ch <-chan types.DBEntry) {
 	log := logger.GetLogger("insert_loop")
 	for entry := range ch {
-		insert(entry, conn, log)
+		Insert(entry, conn, log)
 	}
 }

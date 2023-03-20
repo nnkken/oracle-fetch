@@ -44,14 +44,14 @@ func WithPool(pool *pgxpool.Pool) gin.HandlerFunc {
 			c.AbortWithStatusJSON(500, gin.H{"error": "failed to acquire connection"})
 			return
 		}
-		c.Set("conn", conn)
+		c.Set("conn", conn.Conn)
 		defer conn.Release()
 		c.Next()
 	}
 }
 
-func GetConn(c *gin.Context) *pgxpool.Conn {
-	return c.MustGet("conn").(*pgxpool.Conn)
+func GetConn(c *gin.Context) *pgx.Conn {
+	return c.MustGet("conn").(*pgx.Conn)
 }
 
 // for testing

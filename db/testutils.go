@@ -37,7 +37,7 @@ func SetupTestConn(t *testing.T) *pgx.Conn {
 		panic(err)
 	}
 	t.Cleanup(func() {
-		// conn could be closed so we make a new one
+		conn.Close(context.Background())
 		conn, err := pgx.Connect(context.Background(), dbURL)
 		if err != nil {
 			panic(err)
