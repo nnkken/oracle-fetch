@@ -42,7 +42,7 @@ func WithPool(pool *pgxpool.Pool) gin.HandlerFunc {
 			c.AbortWithStatusJSON(500, gin.H{"error": "failed to acquire connection"})
 			return
 		}
-		c.Set("conn", conn.Conn)
+		c.Set("conn", conn.Conn())
 		defer conn.Release()
 		c.Next()
 	}
