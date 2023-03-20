@@ -17,4 +17,10 @@ ${CHAINLINK_ETH_PATH}/AggregatorV3Interface.abi: ${CHAINLINK_ETH_PATH}/Aggregato
 gen-mock:
 	${DOCKER_RUN} -v $(PWD):/src -w /src vektra/mockery:v2 --name "ChainLinkContract|DataSource"
 
-.PHONY: gen-chainlink-eth gen-mock
+setup-test-db:
+	docker run --rm -p "5433:5432" -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres_test postgres:15
+
+test:
+	PG_TEST_DB_URL="postgres://postgres:postgres@localhost:5433/postgres_test" go test -count 1 -p 1 -v ./...
+
+.PHONY: gen-chainlink-eth gen-mock test-db test

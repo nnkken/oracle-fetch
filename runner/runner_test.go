@@ -70,6 +70,11 @@ func TestInsert(t *testing.T) {
 	require.Equal(t, testEntries[1], rowEntry)
 	hasNextRow = rows.Next()
 	require.False(t, hasNextRow)
+
+	_, err = conn.Exec(context.Background(), `
+		DELETE FROM prices WHERE fetch_timestamp >= $1
+	`, testEntries[0].FetchTimestamp)
+	require.NoError(t, err)
 }
 
 func TestFetch(t *testing.T) {

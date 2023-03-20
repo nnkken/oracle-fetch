@@ -1,22 +1,28 @@
 services:
-  test-postgres:
-    profiles: ["test"]
+  db:
     image: postgres:15
+    shm_size: 1g
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres_test
-  test:
-    profiles: ["test"]
+      POSTGRES_DB: postgres
+  api:
     depends_on:
-      - test-postgres
-    image: golang:1.20
-    volumes:
-      - .:/app
-    environment:
-      PG_TEST_DB_URL: "postgres://postgres:postgres@test-postgres:5432/postgres_test"
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres_test
-    working_dir: /app
-    command: ["go", "test", "./...", "-p", "1"]
+      - db
+    build: "."
+    ports:
+      - "8080:8080"
+    command: [
+      "oracle-fetch", "api",
+      "--database-url", "postgres://postgres:postgres@postgres:5432/postgres",
+      "--host", "localhost:8080",
+    ]
+  fetcher:
+    depends_on:
+      - db
+    build: "."
+    command: [
+      "oracle-fetch", "fetch",
+      "--database-url", "postgres://postgres:postgres@postgres:5432/postgres",
+      "--eth-endpoint", "your-eth-endpoint",
+    ]
