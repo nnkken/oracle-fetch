@@ -15,14 +15,19 @@ services:
     command: [
       "oracle-fetch", "api",
       "--database-url", "postgres://postgres:postgres@postgres:5432/postgres",
-      "--host", "localhost:8080",
+      "--host", ":8080",
     ]
+    restart: always
   fetcher:
     depends_on:
       - postgres
     build: "."
+    volumes:
+      - "./chain-link.json:/chain-link.json"
     command: [
       "oracle-fetch", "fetch",
       "--database-url", "postgres://postgres:postgres@postgres:5432/postgres",
-      "--eth-endpoint", "your-eth-endpoint",
+      "--eth-endpoint", "some-eth-endpoint",
+      "--chain-link-file", "/chain-link.json",
     ]
+    restart: always
