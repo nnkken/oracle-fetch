@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"os"
 	"time"
@@ -99,10 +100,16 @@ var FetchCmd = &cobra.Command{
 			return err
 		}
 
-		err = db.RunMigrations(dbURL)
+		database, err := sql.Open("pgx", dbURL)
+		if err != nil {
+			panic(err)
+		}
+		defer database.Close()
+		err = db.RunMigrations(database)
 		if err != nil {
 			return err
 		}
+		database.Close()
 
 		fetchLoop := runner.NewFetchLoop(fetchInterval)
 		insertLoop := runner.NewInsertLoop()

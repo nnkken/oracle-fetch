@@ -12,14 +12,9 @@ import (
 //go:embed migrations/*.sql
 var embedMigrations embed.FS
 
-func RunMigrations(dbURL string) (err error) {
+func RunMigrations(db *sql.DB) error {
 	goose.SetBaseFS(embedMigrations)
-	db, err := sql.Open("pgx", dbURL)
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-	err = goose.SetDialect("postgres")
+	err := goose.SetDialect("postgres")
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,22 @@
+services:
+  test-postgres:
+    profiles: ["test"]
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres_test
+  test:
+    profiles: ["test"]
+    depends_on:
+      - test-postgres
+    image: golang:1.20
+    volumes:
+      - .:/app
+    environment:
+      PG_TEST_DB_URL: "postgres://postgres:postgres@test-postgres:5432/postgres_test"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres_test
+    working_dir: /app
+    command: ["go", "test", "./...", "-p", "1"]

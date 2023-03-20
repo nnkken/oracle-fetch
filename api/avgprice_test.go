@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"strconv"
 	"testing"
 	"time"
@@ -11,32 +12,32 @@ import (
 
 func TestParseAvgPriceRequest(t *testing.T) {
 	// missing everything
-	c := newContextWithUrl("/avg_price")
+	c, _ := newTestContext("/avg_price")
 	_, err := ParseAvgPriceRequest(c)
 	require.ErrorContains(t, err, "fail to parse avg_price request")
 
 	// missing token
-	c = newContextWithUrl("/avg_price?unit=ETH&from=2000-01-01T00:00:00Z&to=2000-01-02T00:00:00Z")
+	c, _ = newTestContext("/avg_price?unit=ETH&from=2000-01-01T00:00:00Z&to=2000-01-02T00:00:00Z")
 	_, err = ParseAvgPriceRequest(c)
 	require.ErrorContains(t, err, "fail to parse avg_price request")
 
 	// missing from
-	c = newContextWithUrl("/avg_price?unit=ETH&token=BTC&to=2000-01-02T00:00:00Z")
+	c, _ = newTestContext("/avg_price?unit=ETH&token=BTC&to=2000-01-02T00:00:00Z")
 	_, err = ParseAvgPriceRequest(c)
 	require.ErrorContains(t, err, "fail to parse avg_price request")
 
 	// missing to
-	c = newContextWithUrl("/avg_price?unit=ETH&token=BTC&from=2000-01-01T00:00:00Z")
+	c, _ = newTestContext("/avg_price?unit=ETH&token=BTC&from=2000-01-01T00:00:00Z")
 	_, err = ParseAvgPriceRequest(c)
 	require.ErrorContains(t, err, "fail to parse avg_price request")
 
 	// from after to
-	c = newContextWithUrl("/avg_price?unit=ETH&token=BTC&from=2000-01-01T00:00:01Z&to=2000-01-01T00:00:00Z")
+	c, _ = newTestContext("/avg_price?unit=ETH&token=BTC&from=2000-01-01T00:00:01Z&to=2000-01-01T00:00:00Z")
 	_, err = ParseAvgPriceRequest(c)
 	require.ErrorContains(t, err, "'from' must be before 'to'")
 
 	// missing unit, fallback to USD
-	c = newContextWithUrl("/avg_price?token=BTC&from=2000-01-01T00:00:00Z&to=2000-01-02T00:00:00Z")
+	c, _ = newTestContext("/avg_price?token=BTC&from=2000-01-01T00:00:00Z&to=2000-01-02T00:00:00Z")
 	req, err := ParseAvgPriceRequest(c)
 	require.NoError(t, err)
 	require.Equal(t, AvgPriceRequest{
@@ -47,7 +48,7 @@ func TestParseAvgPriceRequest(t *testing.T) {
 	}, req)
 
 	// custom unit
-	c = newContextWithUrl("/avg_price?unit=ETH&token=BTC&from=2000-01-01T00:00:00Z&to=2000-01-02T00:00:00Z")
+	c, _ = newTestContext("/avg_price?unit=ETH&token=BTC&from=2000-01-01T00:00:00Z&to=2000-01-02T00:00:00Z")
 	req, err = ParseAvgPriceRequest(c)
 	require.NoError(t, err)
 	require.Equal(t, AvgPriceRequest{
@@ -58,7 +59,7 @@ func TestParseAvgPriceRequest(t *testing.T) {
 	}, req)
 
 	// timezone, `%2B` is `+` in URL
-	c = newContextWithUrl("/avg_price?unit=ETH&token=BTC&from=2000-01-01T00:00:00%2B08:00&to=2000-01-02T00:00:00%2B08:00")
+	c, _ = newTestContext("/avg_price?unit=ETH&token=BTC&from=2000-01-01T00:00:00%2B08:00&to=2000-01-02T00:00:00%2B08:00")
 	req, err = ParseAvgPriceRequest(c)
 	require.NoError(t, err)
 	require.Equal(t, AvgPriceRequest{
@@ -70,17 +71,33 @@ func TestParseAvgPriceRequest(t *testing.T) {
 }
 
 func TestHandleAvgPriceRequest(t *testing.T) {
-	// TODO
+	c, writer := newTestContext("/avg_price?unit=USD&token=BTC&from=2000-01-01T00:00:19Z&to=2000-01-01T00:00:20Z")
+	HandleAvgPriceRequest(c)
+	require.Equal(t, 404, writer.Code)
+
+	c, writer = newTestContext("/avg_price?unit=USD&token=BTC&from=2000-01-01T00:00:00Z&to=2000-01-02T00:00:00Z")
+	HandleAvgPriceRequest(c)
+	require.Equal(t, 200, writer.Code)
+	var res AvgPriceResponse
+	err := json.Unmarshal(writer.Written, &res)
+	require.NoError(t, err)
+	require.Equal(t, "BTC", res.Token)
+	require.Equal(t, "USD", res.Unit)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 1, 0, time.UTC), res.FirstFetchTimestamp)
+	require.Equal(t, time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC), res.LastFetchTimestamp)
+	require.Equal(t, uint(6), res.PriceCount)
+	priceFloat, err := strconv.ParseFloat(res.AvgPrice, 64)
+	require.NoError(t, err)
+	require.Equal(t, float64(12400e8), priceFloat)
 }
 
 func TestQueryAvgPrice(t *testing.T) {
-	conn := setupTestData(t)
 	res, err := QueryAvgPrice(AvgPriceRequest{
 		Token: "BTC",
 		Unit:  "USD",
 		From:  time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
 		To:    time.Date(2000, 1, 2, 0, 0, 0, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.NoError(t, err)
 	require.Equal(t, "BTC", res.Token)
 	require.Equal(t, "USD", res.Unit)
@@ -96,7 +113,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(2000, 1, 1, 0, 0, 1, 0, time.UTC),
 		To:    time.Date(2000, 1, 1, 0, 0, 5, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.NoError(t, err)
 	require.Equal(t, "BTC", res.Token)
 	require.Equal(t, "USD", res.Unit)
@@ -112,7 +129,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
 		To:    time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.NoError(t, err)
 	require.Equal(t, "ETH", res.Token)
 	require.Equal(t, "USD", res.Unit)
@@ -128,7 +145,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "HKD",
 		From:  time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
 		To:    time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.ErrorIs(t, err, pgx.ErrNoRows)
 
 	_, err = QueryAvgPrice(AvgPriceRequest{
@@ -136,7 +153,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
 		To:    time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.ErrorIs(t, err, pgx.ErrNoRows)
 
 	_, err = QueryAvgPrice(AvgPriceRequest{
@@ -144,7 +161,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(2000, 1, 1, 0, 0, 11, 0, time.UTC),
 		To:    time.Date(2000, 1, 1, 0, 0, 12, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.ErrorIs(t, err, pgx.ErrNoRows)
 
 	_, err = QueryAvgPrice(AvgPriceRequest{
@@ -152,7 +169,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(1999, 1, 1, 0, 0, 0, 0, time.UTC),
 		To:    time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.ErrorIs(t, err, pgx.ErrNoRows)
 
 	res, err = QueryAvgPrice(AvgPriceRequest{
@@ -160,7 +177,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(1999, 1, 1, 0, 0, 0, 0, time.UTC),
 		To:    time.Date(2000, 1, 1, 0, 0, 1, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.NoError(t, err)
 	require.Equal(t, "BTC", res.Token)
 	require.Equal(t, "USD", res.Unit)
@@ -176,7 +193,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
 		To:    time.Date(2001, 1, 1, 0, 0, 0, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.NoError(t, err)
 	require.Equal(t, "BTC", res.Token)
 	require.Equal(t, "USD", res.Unit)
@@ -192,7 +209,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(2000, 1, 1, 8, 0, 10, 0, time.FixedZone("HKT", 8*60*60)),
 		To:    time.Date(2001, 1, 1, 0, 0, 0, 0, time.UTC),
-	}, conn)
+	}, testConn)
 	require.NoError(t, err)
 	require.Equal(t, "BTC", res.Token)
 	require.Equal(t, "USD", res.Unit)
@@ -208,7 +225,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(2000, 1, 1, 0, 0, 10, 0, time.UTC),
 		To:    time.Date(2001, 1, 1, 8, 0, 0, 0, time.FixedZone("HKT", 8*60*60)),
-	}, conn)
+	}, testConn)
 	require.NoError(t, err)
 	require.Equal(t, "BTC", res.Token)
 	require.Equal(t, "USD", res.Unit)
@@ -224,7 +241,7 @@ func TestQueryAvgPrice(t *testing.T) {
 		Unit:  "USD",
 		From:  time.Date(2000, 1, 1, 8, 0, 10, 0, time.FixedZone("HKT", 8*60*60)),
 		To:    time.Date(2001, 1, 1, 8, 0, 0, 0, time.FixedZone("HKT", 8*60*60)),
-	}, conn)
+	}, testConn)
 	require.NoError(t, err)
 	require.Equal(t, "BTC", res.Token)
 	require.Equal(t, "USD", res.Unit)
