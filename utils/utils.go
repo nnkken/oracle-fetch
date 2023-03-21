@@ -1,19 +1,26 @@
 package utils
 
 import (
-	"testing"
-	"time"
+	"math/big"
 )
 
-var TimeNow = time.Now
+const Decimals = 8
 
-func MockTimeNow(t *testing.T, timePoint time.Time) {
-	TimeNow = func() time.Time {
-		return timePoint
-	}
-	t.Cleanup(UnmockTimeNow)
+// ComputeDecimalShift compute the decimal shift between the fetched price and the price we want to store
+func ComputeDecimalShift(fetchedDecimals uint8) int {
+	return Decimals - int(fetchedDecimals)
 }
 
-func UnmockTimeNow() {
-	TimeNow = time.Now
+// NormalizePrice utilize ComputeDecimalShift to shift the price
+// i.e. storedPrice = fetchedPrice * 10^decimalShift
+func NormalizePrice(price *big.Int, fetchedDecimals uint8) *big.Int {
+	decimalShift := ComputeDecimalShift(fetchedDecimals)
+	if decimalShift == 0 {
+		return price
+	}
+	if decimalShift > 0 {
+		return new(big.Int).Mul(price, new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(decimalShift)), nil))
+	}
+	// TODO: maybe not integer? do we care?
+	return new(big.Int).Div(price, new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(-decimalShift)), nil))
 }

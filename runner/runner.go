@@ -7,8 +7,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
 
-	"github.com/nnkken/oracle-fetch/logger"
 	"github.com/nnkken/oracle-fetch/types"
+	"github.com/nnkken/oracle-fetch/utils"
 )
 
 type FetchLoop struct {
@@ -33,7 +33,7 @@ func fetch(dataSource types.DataSource, output chan<- types.DBEntry, log *zap.Su
 }
 
 func (loop *FetchLoop) Run(dataSources []types.DataSource, output chan<- types.DBEntry) {
-	log := logger.GetLogger("fetch_loop")
+	log := utils.GetLogger("fetch_loop")
 	timeCh := time.Tick(loop.interval)
 	// not using range since we want to execute loop immediately before the first tick
 	for ; true; <-timeCh {
@@ -62,7 +62,7 @@ func Insert(entry types.DBEntry, conn *pgx.Conn, log *zap.SugaredLogger) {
 }
 
 func (loop *InsertLoop) Run(conn *pgx.Conn, ch <-chan types.DBEntry) {
-	log := logger.GetLogger("insert_loop")
+	log := utils.GetLogger("insert_loop")
 	for entry := range ch {
 		Insert(entry, conn, log)
 	}

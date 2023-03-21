@@ -6,7 +6,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 
-	"github.com/nnkken/oracle-fetch/datasource"
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth/contract"
 	"github.com/nnkken/oracle-fetch/types"
 	"github.com/nnkken/oracle-fetch/utils"
@@ -32,18 +31,18 @@ type ChainLinkContract interface {
 
 type ChainLinkETHSource struct {
 	instance ChainLinkContract
-	token    string
-	unit     string
-	decimals uint8
+	Token    string
+	Unit     string
+	Decimals uint8
 }
 
 // NewChainLinkETHSource initialize the contract instance
 func NewChainLinkETHSource(instance ChainLinkContract, token, unit string, decimals uint8) *ChainLinkETHSource {
 	return &ChainLinkETHSource{
 		instance: instance,
-		token:    token,
-		unit:     unit,
-		decimals: decimals,
+		Token:    token,
+		Unit:     unit,
+		Decimals: decimals,
 	}
 }
 
@@ -53,9 +52,9 @@ func (s *ChainLinkETHSource) Fetch() ([]types.DBEntry, error) {
 		return nil, err
 	}
 	dbEntry := types.DBEntry{
-		Token:          s.token,
-		Unit:           s.unit,
-		Price:          datasource.NormalizePrice(res.Answer, s.decimals),
+		Token:          s.Token,
+		Unit:           s.Unit,
+		Price:          utils.NormalizePrice(res.Answer, s.Decimals),
 		PriceTimestamp: time.Unix(res.UpdatedAt.Int64(), 0).UTC(),
 		FetchTimestamp: utils.TimeNow().UTC(),
 	}

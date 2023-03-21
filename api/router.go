@@ -5,12 +5,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/nnkken/oracle-fetch/logger"
+	"github.com/nnkken/oracle-fetch/utils"
 )
 
 func NewRouter(connPool *pgxpool.Pool) *gin.Engine {
 	router := gin.Default()
-	log := logger.GetLogger("api")
+	log := utils.GetLogger("api")
 	router.Use(WithLogger(log))
 	router.Use(WithPool(connPool))
 	router.GET("/price", HandlePriceRequest)

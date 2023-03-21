@@ -23,11 +23,10 @@ services:
       - postgres
     build: "."
     volumes:
-      - "./chain-link.json:/chain-link.json"
+      - "./config.json:/config.json"
     command: [
       "oracle-fetch", "fetch",
       "--database-url", "postgres://postgres:postgres@postgres:5432/postgres",
-      "--eth-endpoint", "some-eth-endpoint",
-      "--chain-link-file", "/chain-link.json",
+      "--config", "/config.json",
     ]
     restart: always

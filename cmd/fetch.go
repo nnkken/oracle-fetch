@@ -8,58 +8,31 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"go.uber.org/ratelimit"
-
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 
 	"github.com/jackc/pgx/v5"
 
 	"github.com/nnkken/oracle-fetch/datasource"
-	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth"
-	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth/contract"
 	"github.com/nnkken/oracle-fetch/db"
 	"github.com/nnkken/oracle-fetch/runner"
 	"github.com/nnkken/oracle-fetch/types"
 )
 
 const (
-	FlagChainLinkFile = "chain-link-file"
+	FlagConfigFile    = "config"
 	FlagFetchInterval = "fetch-interval"
-	FlagEthEndpoint   = "eth-endpoint"
 )
 
-type ChainLinkJsonEntry struct {
-	Token    string `json:"token"`
-	Unit     string `json:"unit"`
-	Decimals uint8  `json:"decimals"`
-	Address  string `json:"address"`
-}
-
-func initChainLinkETH(chainLinkFile string, client *ethclient.Client) ([]types.DataSource, error) {
-	bz, err := os.ReadFile(chainLinkFile)
+func initDataSources(configFile string) ([]types.DataSource, error) {
+	bz, err := os.ReadFile(configFile)
 	if err != nil {
 		return nil, err
 	}
-	var entries []ChainLinkJsonEntry
-	err = json.Unmarshal(bz, &entries)
+	var configs []types.DataSourceConfig
+	err = json.Unmarshal(bz, &configs)
 	if err != nil {
 		return nil, err
 	}
-
-	// TODO: make the rate limit configurable
-	limiter := ratelimit.New(10)
-	dataSources := make([]types.DataSource, len(entries))
-	for i, entry := range entries {
-		contractInstance, err := contract.NewContract(common.HexToAddress(entry.Address), client)
-		if err != nil {
-			return nil, err
-		}
-		dataSource := chainlink.NewChainLinkETHSource(contractInstance, entry.Token, entry.Unit, entry.Decimals)
-		limited := datasource.NewRateLimitDataSource(dataSource, limiter)
-		dataSources[i] = limited
-	}
-	return dataSources, nil
+	return datasource.InitDataSourcesFromConfig(configs)
 }
 
 var FetchCmd = &cobra.Command{
@@ -70,15 +43,11 @@ var FetchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		ethEndpoint, err := cmd.Flags().GetString(FlagEthEndpoint)
-		if err != nil {
-			return err
-		}
 		fetchInterval, err := cmd.Flags().GetDuration(FlagFetchInterval)
 		if err != nil {
 			return err
 		}
-		chainLinkFile, err := cmd.Flags().GetString(FlagChainLinkFile)
+		chainLinkFile, err := cmd.Flags().GetString(FlagConfigFile)
 		if err != nil {
 			return err
 		}
@@ -89,13 +58,7 @@ var FetchCmd = &cobra.Command{
 		}
 		defer conn.Close(context.Background())
 
-		client, err := ethclient.Dial(ethEndpoint)
-		if err != nil {
-			return err
-		}
-		defer client.Close()
-
-		dataSources, err := initChainLinkETH(chainLinkFile, client)
+		dataSources, err := initDataSources(chainLinkFile)
 		if err != nil {
 			return err
 		}
@@ -123,7 +86,6 @@ var FetchCmd = &cobra.Command{
 
 func init() {
 	FetchCmd.Flags().String(FlagDatabaseURL, "postgres://postgres:postgres@localhost:5432/postgres", "Postgres database url")
-	FetchCmd.Flags().String(FlagEthEndpoint, "http://localhost:5051", "Ethereum endpoint")
 	FetchCmd.Flags().Duration(FlagFetchInterval, 1*time.Minute, "fetch interval")
-	FetchCmd.Flags().String(FlagChainLinkFile, "./chain-link.json", "ChainLink JSON file for address and token info")
+	FetchCmd.Flags().String(FlagConfigFile, "./config.json", "JSON file for data source definitions")
 }

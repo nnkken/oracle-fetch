@@ -1,0 +1,755 @@
+[
+  {
+    "type": "chainlink-eth",
+    "rate_limit_rps": 10,
+    "config": {
+      "eth_endpoint": "http://localhost:8545",
+      "contracts": [
+        {
+          "token": "1INCH",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xc929ad75B72593967DE83E7F7Cda0493458261D9"
+        },
+        {
+          "token": "AAPL",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x139C8512Cde1778e9b9a8e721ce1aEbd4dD43587"
+        },
+        {
+          "token": "AAVE",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x547a514d5e3769680Ce22B2361c10Ea13619e8a9"
+        },
+        {
+          "token": "ADA",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xAE48c91dF1fE419994FFDa27da09D5aC69c30f55"
+        },
+        {
+          "token": "ADX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x231e764B44b2C1b7Ca171fa8021A24ed520Cde10"
+        },
+        {
+          "token": "ALCX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xc355e4C0B3ff4Ed0B49EaACD55FE29B311f42976"
+        },
+        {
+          "token": "AMPL",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xe20CA8D7546932360e37E9D72c1a47334af57706"
+        },
+        {
+          "token": "AMZN",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x8994115d287207144236c13Be5E2bDbf6357D9Fd"
+        },
+        {
+          "token": "ANKR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x7eed379bf00005CfeD29feD4009669dE9Bcc21ce"
+        },
+        {
+          "token": "APE",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xD10aBbC76679a20055E167BB80A24ac851b37056"
+        },
+        {
+          "token": "ARPA",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xc40ec815A2f8eb9912BD688d3bdE6B6D50A37ff2"
+        },
+        {
+          "token": "ATOM",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xDC4BDB458C6361093069Ca2aD30D74cc152EdC75"
+        },
+        {
+          "token": "AUD",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x77F9710E7d0A19669A13c055F62cd80d313dF022"
+        },
+        {
+          "token": "AVAX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xFF3EEb22B5E3dE6e705b44749C2559d704923FD7"
+        },
+        {
+          "token": "BADGER",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x66a47b7206130e6FF64854EF0E1EDfa237E65339"
+        },
+        {
+          "token": "BAL",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xdF2917806E30300537aEB49A7663062F4d1F2b5F"
+        },
+        {
+          "token": "BCH",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x9F0F69428F923D6c95B781F89E165C9b2df9789D"
+        },
+        {
+          "token": "BIT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x7b33EbfA52F215a30FaD5a71b3FeE57a4831f1F0"
+        },
+        {
+          "token": "BNB",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x14e613AC84a31f709eadbdF89C6CC390fDc9540A"
+        },
+        {
+          "token": "BNT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x1E6cF0D433de4FE882A437ABC654F58E1e78548c"
+        },
+        {
+          "token": "BRL",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x971E8F1B779A5F1C36e1cd7ef44Ba1Cc2F5EeE0f"
+        },
+        {
+          "token": "BTC",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c"
+        },
+        {
+          "token": "BUSD",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x833D8Eb16D306ed1FbB5D7A2E019e106B960965A"
+        },
+        {
+          "token": "CAD",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xa34317DB73e77d453b1B8d04550c44D10e981C8e"
+        },
+        {
+          "token": "CAKE",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xEb0adf5C06861d6c07174288ce4D0a8128164003"
+        },
+        {
+          "token": "CHF",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x449d117117838fFA61263B61dA6301AA2a88B13A"
+        },
+        {
+          "token": "CNY",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xeF8A4aF35cd47424672E3C590aBD37FBB7A7759a"
+        },
+        {
+          "token": "COMP",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xdbd020CAeF83eFd542f4De03e3cF0C28A4428bd5"
+        },
+        {
+          "token": "CRO",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x00Cb80Cf097D9aA9A3779ad8EE7cF98437eaE050"
+        },
+        {
+          "token": "CRV",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xCd627aA160A6fA45Eb793D19Ef54f5062F20f33f"
+        },
+        {
+          "token": "CSPR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x9e37a8Ee3bFa8eD6783Db031Dc458d200b226074"
+        },
+        {
+          "token": "CVX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xd962fC30A72A84cE50161031391756Bf2876Af5D"
+        },
+        {
+          "token": "Calculated XSUSHI",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xCC1f5d9e6956447630d703C8e93b2345c2DE3D13"
+        },
+        {
+          "token": "DAI",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xAed0c38402a5d19df6E4c03F4E2DceD6e29c1ee9"
+        },
+        {
+          "token": "DASH",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xFb0cADFEa136E9E343cfb55B863a6Df8348ab912"
+        },
+        {
+          "token": "DODO",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x9613A51Ad59EE375e6D8fa12eeef0281f1448739"
+        },
+        {
+          "token": "DOGE",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x2465CefD3b488BE410b941b1d4b2767088e2A028"
+        },
+        {
+          "token": "DOT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x1C07AFb8E2B827c5A4739C6d59Ae3A5035f28734"
+        },
+        {
+          "token": "DPI",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xD2A593BF7594aCE1faD597adb697b5645d5edDB2"
+        },
+        {
+          "token": "DYDX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x478909D4D798f3a1F11fFB25E4920C959B4aDe0b"
+        },
+        {
+          "token": "ENJ",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x23905C55dC11D609D5d11Dc604905779545De9a7"
+        },
+        {
+          "token": "ENS",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x5C00128d4d1c2F4f652C267d7bcdD7aC99C16E16"
+        },
+        {
+          "token": "EOS",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x10a43289895eAff840E8d45995BBa89f9115ECEe"
+        },
+        {
+          "token": "ERN",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x0a87e12689374A4EF49729582B474a1013cceBf8"
+        },
+        {
+          "token": "ETC",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xaEA2808407B7319A31A383B6F8B60f04BCa23cE2"
+        },
+        {
+          "token": "ETH",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"
+        },
+        {
+          "token": "EUR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xb49f677943BC038e9857d61E7d053CaA2C1734C1"
+        },
+        {
+          "token": "EURT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x01D391A48f4F7339aC64CA2c83a07C22F95F587a"
+        },
+        {
+          "token": "FB",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xCe1051646393087e706288C1B57Fd26446657A7f"
+        },
+        {
+          "token": "FEI",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x31e0a88fecB6eC0a411DBe0e9E76391498296EE9"
+        },
+        {
+          "token": "FLOW",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xD9BdD9f5ffa7d89c846A5E3231a093AE4b3469D2"
+        },
+        {
+          "token": "FOR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x456834f736094Fb0AAD40a9BBc9D4a0f37818A54"
+        },
+        {
+          "token": "FORTH",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x7D77Fd73E468baECe26852776BeaF073CDc55fA0"
+        },
+        {
+          "token": "FOX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xccA02FFEFAcE21325befD6616cB4Ba5fCB047480"
+        },
+        {
+          "token": "FRAX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xB9E1E3A9feFf48998E45Fa90847ed4D467E8BcfD"
+        },
+        {
+          "token": "FTT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x84e3946C6df27b453315a1B38e4dECEF23d9F16F"
+        },
+        {
+          "token": "FXS",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x6Ebc52C8C1089be9eB3945C4350B68B8E4C2233f"
+        },
+        {
+          "token": "GBP",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x5c0Ab2d9b5a7ed9f470386e82BB36A3613cDd4b5"
+        },
+        {
+          "token": "GLM",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x83441C3A10F4D05de6e0f2E849A850Ccf27E6fa7"
+        },
+        {
+          "token": "GOOGL",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x36D39936BeA501755921beB5A382a88179070219"
+        },
+        {
+          "token": "GRT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x86cF33a451dE9dc61a2862FD94FF4ad4Bd65A5d2"
+        },
+        {
+          "token": "GUSD",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xa89f5d2365ce98B3cD68012b6f503ab1416245Fc"
+        },
+        {
+          "token": "HBAR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x38C5ae3ee324ee027D88c5117ee58d07c9b4699b"
+        },
+        {
+          "token": "HIGH",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xe2F95bC12FE8a3C35684Be7586C39fD7c0E5b403"
+        },
+        {
+          "token": "HT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xE1329B3f6513912CAf589659777b66011AEE5880"
+        },
+        {
+          "token": "IMX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xBAEbEFc1D023c0feCcc047Bff42E75F15Ff213E6"
+        },
+        {
+          "token": "INJ",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xaE2EbE3c4D20cE13cE47cbb49b6d7ee631Cd816e"
+        },
+        {
+          "token": "INR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x605D5c2fBCeDb217D7987FC0951B5753069bC360"
+        },
+        {
+          "token": "IOTX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x96c45535d235148Dc3ABA1E48A6E3cFB3510f4E2"
+        },
+        {
+          "token": "JPY",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xBcE206caE7f0ec07b545EddE332A47C2F75bbeb3"
+        },
+        {
+          "token": "KNC",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xf8fF43E991A81e6eC886a3D281A2C6cC19aE70Fc"
+        },
+        {
+          "token": "KRW",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x01435677FB11763550905594A16B645847C1d0F3"
+        },
+        {
+          "token": "KSM",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x06E4164E24E72B879D93360D1B9fA05838A62EB5"
+        },
+        {
+          "token": "LINK",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c"
+        },
+        {
+          "token": "LTC",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x6AF09DF7563C363B5763b9102712EbeD3b9e859B"
+        },
+        {
+          "token": "LUSD",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x3D7aE7E594f2f2091Ad8798313450130d0Aba3a0"
+        },
+        {
+          "token": "MANA",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x56a4857acbcfe3a66965c251628B1c9f1c408C19"
+        },
+        {
+          "token": "MATIC",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x7bAC85A8a13A4BcD8abb3eB7d6b4d632c5a57676"
+        },
+        {
+          "token": "MIM",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x7A364e8770418566e3eb2001A96116E6138Eb32F"
+        },
+        {
+          "token": "MKR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xec1D1B3b0443256cc3860e24a46F108e699484Aa"
+        },
+        {
+          "token": "MSFT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x021Fb44bfeafA0999C7b07C4791cf4B859C3b431"
+        },
+        {
+          "token": "NEAR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xC12A6d1D827e23318266Ef16Ba6F397F2F91dA9b"
+        },
+        {
+          "token": "NFLX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x67C2e69c5272B94AF3C90683a9947C39Dc605ddE"
+        },
+        {
+          "token": "NMR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xcC445B35b3636bC7cC7051f4769D8982ED0d449A"
+        },
+        {
+          "token": "NZD",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x3977CFc9e4f29C184D4675f4EB8e0013236e5f3e"
+        },
+        {
+          "token": "OM",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xb9583cfBdEeacd2705546F392E43F8E03eB92216"
+        },
+        {
+          "token": "OMG",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x7D476f061F8212A8C9317D5784e72B4212436E93"
+        },
+        {
+          "token": "ONT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xcDa3708C5c2907FCca52BB3f9d3e4c2028b89319"
+        },
+        {
+          "token": "OXT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xd75AAaE4AF0c398ca13e2667Be57AF2ccA8B5de6"
+        },
+        {
+          "token": "PERP",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x01cE1210Fe8153500F60f7131d63239373D7E26C"
+        },
+        {
+          "token": "PHA",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x2B1248028fe48864c4f1c305E524e2e6702eAFDF"
+        },
+        {
+          "token": "PLA",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xbc535B134DdF81fc83254a3D0Ed2C0C60144405E"
+        },
+        {
+          "token": "RAI",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x483d36F6a1d063d580c7a24F9A42B346f3a69fbb"
+        },
+        {
+          "token": "REN",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x0f59666EDE214281e956cb3b2D0d69415AfF4A01"
+        },
+        {
+          "token": "REQ",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x2F05888D185970f178f40610306a0Cc305e52bBF"
+        },
+        {
+          "token": "RSR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x759bBC1be8F90eE6457C44abc7d443842a976d02"
+        },
+        {
+          "token": "SAND",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x35E3f7E558C04cE7eEE1629258EcbbA03B36Ec56"
+        },
+        {
+          "token": "SGD",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xe25277fF4bbF9081C75Ab0EB13B4A13a721f3E13"
+        },
+        {
+          "token": "SNX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xDC3EA94CD0AC27d9A86C180091e7f78C683d3699"
+        },
+        {
+          "token": "SOL",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x4ffC43a60e009B551865A93d232E33Fce9f01507"
+        },
+        {
+          "token": "SPELL",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x8c110B94C5f1d347fAcF5E1E938AB2db60E3c9a8"
+        },
+        {
+          "token": "SUSHI",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xCc70F09A6CC17553b2E31954cD36E4A2d89501f7"
+        },
+        {
+          "token": "SXP",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xFb0CfD6c19e25DB4a08D8a204a387cEa48Cc138f"
+        },
+        {
+          "token": "TOMO",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x3d44925a8E9F9DFd90390E58e92Ec16c996A331b"
+        },
+        {
+          "token": "TRU",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x26929b85fE284EeAB939831002e1928183a10fb1"
+        },
+        {
+          "token": "TRY",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xB09fC5fD3f11Cf9eb5E1C5Dba43114e3C9f477b5"
+        },
+        {
+          "token": "TSLA",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x1ceDaaB50936881B3e449e47e40A2cDAF5576A4a"
+        },
+        {
+          "token": "TUSD",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xec746eCF986E2927Abd291a2A1716c940100f8Ba"
+        },
+        {
+          "token": "Total Marketcap",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xEC8761a0A73c34329CA5B1D3Dc7eD07F30e836e2"
+        },
+        {
+          "token": "UNI",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x553303d460EE0afB37EdFf9bE42922D8FF63220e"
+        },
+        {
+          "token": "USDC",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6"
+        },
+        {
+          "token": "USDK",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xfAC81Ea9Dd29D8E9b212acd6edBEb6dE38Cb43Af"
+        },
+        {
+          "token": "USDP",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x09023c0DA49Aaf8fc3fA3ADF34C6A7016D38D5e3"
+        },
+        {
+          "token": "USDT",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x3E7d1eAB13ad0104d2750B8863b489D65364e32D"
+        },
+        {
+          "token": "WING",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x134fE0a225Fb8e6683617C13cEB6B3319fB4fb82"
+        },
+        {
+          "token": "WTI",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xf3584F4dd3b467e73C2339EfD008665a70A4185c"
+        },
+        {
+          "token": "XAG",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x379589227b15F1a12195D3f2d90bBc9F31f95235"
+        },
+        {
+          "token": "XAU",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x214eD9Da11D2fbe465a6fc601a91E62EbEc1a0D6"
+        },
+        {
+          "token": "XCN",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xeb988B77b94C186053282BfcD8B7ED55142D3cAB"
+        },
+        {
+          "token": "XMR",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xFA66458Cce7Dd15D8650015c4fce4D278271618F"
+        },
+        {
+          "token": "XRP",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xCed2660c6Dd1Ffd856A5A82C67f3482d88C50b12"
+        },
+        {
+          "token": "YFI",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xA027702dbb89fbd58938e4324ac03B58d812b0E1"
+        },
+        {
+          "token": "ZRX",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0x2885d15b8Af22648b98B122b22FDF4D2a56c6023"
+        },
+        {
+          "token": "sUSD",
+          "unit": "USD",
+          "decimals": 8,
+          "address": "0xad35Bd71b9aFE6e4bDc266B345c198eaDEf9Ad94"
+        }
+      ]
+    }
+  }
+]
