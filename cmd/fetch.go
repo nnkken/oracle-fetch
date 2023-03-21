@@ -12,9 +12,9 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/nnkken/oracle-fetch/datasource"
+	"github.com/nnkken/oracle-fetch/datasource/types"
 	"github.com/nnkken/oracle-fetch/db"
 	"github.com/nnkken/oracle-fetch/runner"
-	"github.com/nnkken/oracle-fetch/types"
 )
 
 const (
@@ -76,7 +76,7 @@ var FetchCmd = &cobra.Command{
 
 		fetchLoop := runner.NewFetchLoop(fetchInterval)
 		insertLoop := runner.NewInsertLoop()
-		ch := make(chan types.DBEntry)
+		ch := make(chan db.DBEntry)
 
 		go fetchLoop.Run(dataSources, ch)
 		insertLoop.Run(conn, ch)

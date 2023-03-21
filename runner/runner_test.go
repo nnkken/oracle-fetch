@@ -11,11 +11,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/nnkken/oracle-fetch/datasource/types"
 	"github.com/nnkken/oracle-fetch/db"
-	"github.com/nnkken/oracle-fetch/types"
 )
 
-var testEntries = []types.DBEntry{
+var testEntries = []db.DBEntry{
 	{
 		Token:          "TEST",
 		Unit:           "TEST-UNIT",
@@ -48,7 +48,7 @@ func TestInsert(t *testing.T) {
 	require.NoError(t, err)
 	hasNextRow := rows.Next()
 	require.True(t, hasNextRow)
-	var rowEntry types.DBEntry
+	var rowEntry db.DBEntry
 	var priceStr string
 	err = rows.Scan(&rowEntry.Token, &rowEntry.Unit, &priceStr, &rowEntry.PriceTimestamp, &rowEntry.FetchTimestamp)
 	require.NoError(t, err)
@@ -81,7 +81,7 @@ func TestFetch(t *testing.T) {
 	mockDataSource := types.NewMockDataSource(t)
 	mockCall := mockDataSource.EXPECT().Fetch().Return(testEntries, nil)
 
-	ch := make(chan types.DBEntry, 100)
+	ch := make(chan db.DBEntry, 100)
 	fetch(mockDataSource, ch, zap.S())
 	require.Len(t, ch, 2)
 	entry := <-ch

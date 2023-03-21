@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth"
-	"github.com/nnkken/oracle-fetch/types"
+	"github.com/nnkken/oracle-fetch/datasource/types"
 )
 
 func TestInitDataSourcesFromConfig(t *testing.T) {

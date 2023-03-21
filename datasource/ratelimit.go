@@ -3,7 +3,8 @@ package datasource
 import (
 	"go.uber.org/ratelimit"
 
-	"github.com/nnkken/oracle-fetch/types"
+	"github.com/nnkken/oracle-fetch/datasource/types"
+	"github.com/nnkken/oracle-fetch/db"
 )
 
 var _ types.DataSource = (*RateLimitDataSource)(nil)
@@ -22,7 +23,7 @@ func RateLimitDecorator(limiter ratelimit.Limiter) types.DataSourceDecorator {
 	}
 }
 
-func (s *RateLimitDataSource) Fetch() ([]types.DBEntry, error) {
+func (s *RateLimitDataSource) Fetch() ([]db.DBEntry, error) {
 	s.Limiter.Take()
 	return s.Source.Fetch()
 }

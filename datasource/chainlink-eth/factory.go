@@ -7,7 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth/contract"
-	"github.com/nnkken/oracle-fetch/types"
+	"github.com/nnkken/oracle-fetch/datasource/types"
 )
 
 type ChainLinkEthContractEntry struct {

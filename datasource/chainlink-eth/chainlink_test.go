@@ -10,7 +10,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 
-	"github.com/nnkken/oracle-fetch/types"
+	"github.com/nnkken/oracle-fetch/db"
 	"github.com/nnkken/oracle-fetch/utils"
 )
 
@@ -35,7 +35,7 @@ func TestChainLinkETHSource(t *testing.T) {
 	dbEntries, err := source.Fetch()
 	require.NoError(t, err)
 	require.Len(t, dbEntries, 1)
-	require.Equal(t, types.DBEntry{
+	require.Equal(t, db.DBEntry{
 		Token:          token,
 		Unit:           unit,
 		Price:          big.NewInt(1e10),
@@ -60,7 +60,7 @@ func TestChainLinkETHSource(t *testing.T) {
 	dbEntries, err = source.Fetch()
 	require.NoError(t, err)
 	require.Len(t, dbEntries, 1)
-	require.Equal(t, types.DBEntry{
+	require.Equal(t, db.DBEntry{
 		Token:          token,
 		Unit:           unit,
 		Price:          big.NewInt(1e8),
@@ -79,7 +79,7 @@ func TestChainLinkETHSource(t *testing.T) {
 	dbEntries, err = source.Fetch()
 	require.NoError(t, err)
 	require.Len(t, dbEntries, 1)
-	require.Equal(t, types.DBEntry{
+	require.Equal(t, db.DBEntry{
 		Token:          token,
 		Unit:           unit,
 		Price:          big.NewInt(1e12),

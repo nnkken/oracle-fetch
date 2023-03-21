@@ -6,7 +6,7 @@ import (
 	"go.uber.org/ratelimit"
 
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth"
-	"github.com/nnkken/oracle-fetch/types"
+	"github.com/nnkken/oracle-fetch/datasource/types"
 )
 
 var dataSourceFactoryMap = map[string]types.DataSourceFactory{

@@ -7,7 +7,8 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 
 	"github.com/nnkken/oracle-fetch/datasource/chainlink-eth/contract"
-	"github.com/nnkken/oracle-fetch/types"
+	"github.com/nnkken/oracle-fetch/datasource/types"
+	"github.com/nnkken/oracle-fetch/db"
 	"github.com/nnkken/oracle-fetch/utils"
 )
 
@@ -46,17 +47,17 @@ func NewChainLinkETHSource(instance ChainLinkContract, token, unit string, decim
 	}
 }
 
-func (s *ChainLinkETHSource) Fetch() ([]types.DBEntry, error) {
+func (s *ChainLinkETHSource) Fetch() ([]db.DBEntry, error) {
 	res, err := s.instance.LatestRoundData(nil)
 	if err != nil {
 		return nil, err
 	}
-	dbEntry := types.DBEntry{
+	dbEntry := db.DBEntry{
 		Token:          s.Token,
 		Unit:           s.Unit,
 		Price:          utils.NormalizePrice(res.Answer, s.Decimals),
 		PriceTimestamp: time.Unix(res.UpdatedAt.Int64(), 0).UTC(),
 		FetchTimestamp: utils.TimeNow().UTC(),
 	}
-	return []types.DBEntry{dbEntry}, nil
+	return []db.DBEntry{dbEntry}, nil
 }

@@ -7,7 +7,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
 
-	"github.com/nnkken/oracle-fetch/types"
+	"github.com/nnkken/oracle-fetch/datasource/types"
+	"github.com/nnkken/oracle-fetch/db"
 	"github.com/nnkken/oracle-fetch/utils"
 )
 
@@ -21,7 +22,7 @@ func NewFetchLoop(interval time.Duration) *FetchLoop {
 	}
 }
 
-func fetch(dataSource types.DataSource, output chan<- types.DBEntry, log *zap.SugaredLogger) {
+func fetch(dataSource types.DataSource, output chan<- db.DBEntry, log *zap.SugaredLogger) {
 	dbEntries, err := dataSource.Fetch()
 	if err != nil {
 		log.Errorw("failed to fetch data", "error", err)
@@ -32,7 +33,7 @@ func fetch(dataSource types.DataSource, output chan<- types.DBEntry, log *zap.Su
 	}
 }
 
-func (loop *FetchLoop) Run(dataSources []types.DataSource, output chan<- types.DBEntry) {
+func (loop *FetchLoop) Run(dataSources []types.DataSource, output chan<- db.DBEntry) {
 	log := utils.GetLogger("fetch_loop")
 	timeCh := time.Tick(loop.interval)
 	// not using range since we want to execute loop immediately before the first tick
@@ -49,7 +50,7 @@ func NewInsertLoop() *InsertLoop {
 	return &InsertLoop{}
 }
 
-func Insert(entry types.DBEntry, conn *pgx.Conn, log *zap.SugaredLogger) {
+func Insert(entry db.DBEntry, conn *pgx.Conn, log *zap.SugaredLogger) {
 	_, err := conn.Exec(context.Background(), `
 			INSERT INTO prices (token, unit, price, price_timestamp, fetch_timestamp)
 			VALUES ($1, $2, $3, $4, $5)
@@ -61,7 +62,7 @@ func Insert(entry types.DBEntry, conn *pgx.Conn, log *zap.SugaredLogger) {
 	log.Infow("inserted entry into database", "entry", entry)
 }
 
-func (loop *InsertLoop) Run(conn *pgx.Conn, ch <-chan types.DBEntry) {
+func (loop *InsertLoop) Run(conn *pgx.Conn, ch <-chan db.DBEntry) {
 	log := utils.GetLogger("insert_loop")
 	for entry := range ch {
 		Insert(entry, conn, log)
