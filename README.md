@@ -39,9 +39,7 @@ See `docs/swagger.yaml` or `docs/swagger.json` for details. You may also access 
 
 ## Development
 
-You may use Docker Compose to easily start a development environment, with Postgres database setup.
-
-In `docker-compose.yml`, configurate the `--eth-endpoint` part under `fetcher` service, then run `docker compose up` to start the service, and `docker compose build` to rebuild.
+You may use Docker Compose to easily start a development environment, with Postgres database setup, by running `docker compose up` to start the service, and `docker compose build` to rebuild.
 
 ## Testing
 
