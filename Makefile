@@ -21,6 +21,10 @@ gen-mock:
 setup-test-db:
 	docker run --rm -p "${PG_TEST_PORT}:5432" -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres_test postgres:15
 
+# TODO: containerize this, currently needs `go install github.com/swaggo/swag/cmd/swag@latest`
+gen-swag:
+	swag init
+
 test:
 	PG_TEST_DB_URL="postgres://postgres:postgres@localhost:${PG_TEST_PORT}/postgres_test" go test -count 1 -p 1 -v ./...
 

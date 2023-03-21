@@ -19,11 +19,11 @@ type PriceRequest struct {
 }
 
 type PriceResponse struct {
-	Token          string    `json:"token"`
-	Unit           string    `json:"unit"`
-	Price          string    `json:"price"`
-	PriceTimestamp time.Time `json:"price_timestamp"`
-	FetchTimestamp time.Time `json:"fetch_timestamp"`
+	Token          string    `json:"token" example:"BTC"`
+	Unit           string    `json:"unit" example:"USD"`
+	Price          string    `json:"price" example:"1234500000000.000000 (8 extra decimal places, so it means 12345)"`
+	PriceTimestamp time.Time `json:"price_timestamp" example:"2023-03-18T01:23:45Z"`
+	FetchTimestamp time.Time `json:"fetch_timestamp" example:"2023-03-18T01:23:45Z"`
 }
 
 func ParsePriceRequest(c *gin.Context) (PriceRequest, error) {
@@ -38,10 +38,21 @@ func ParsePriceRequest(c *gin.Context) (PriceRequest, error) {
 	return req, nil
 }
 
+// @Summary Get the price of a token-unit pair at a given timestamp
+// @Description Retrieves the most recent price of a token-unit pair in the specified unit before the given timestamp
+// @Tags price
+// @Produce json
+// @Param token query string true "The token part of the pair"
+// @Param unit query string false "The unit part of the pair (default: USD)"
+// @Param timestamp query string false "The fetch timestamp to retrieve the price for, in RFC3339 format (e.g. 2023-03-18T01:23:45+08:00) (default: current time)"
+// @Success 200 {object} PriceResponse "Returns the price of the token"
+// @Failure 400 {object} ErrorResponse "Returns an error if the request is invalid"
+// @Failure 404 {object} ErrorResponse "Returns 404 if the price info is not found at the given timestamp"
+// @Router /price [get]
 func HandlePriceRequest(c *gin.Context) {
 	req, err := ParsePriceRequest(c)
 	if err != nil {
-		c.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(400, Error(err))
 		return
 	}
 	res, err := QueryPrice(req, GetConn(c))

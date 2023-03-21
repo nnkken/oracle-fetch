@@ -51,3 +51,12 @@ func WithPool(pool *pgxpool.Pool) gin.HandlerFunc {
 func GetConn(c *gin.Context) *pgx.Conn {
 	return c.MustGet("conn").(*pgx.Conn)
 }
+
+// For Swagger
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+func Error(err error) gin.H {
+	return gin.H{"error": err.Error()}
+}

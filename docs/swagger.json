@@ -1,0 +1,180 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/avg_price": {
+            "get": {
+                "description": "Retrieves the average price of a token-unit pair over the given time range",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price"
+                ],
+                "summary": "Get the average price of a token-unit pair over a time range",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The token part of the pair",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The unit part of the pair (default: USD)",
+                        "name": "unit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The start of the time range to retrieve the average price for, in RFC3339 format (e.g. 2023-03-18T01:23:45+08:00)",
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The end of the time range to retrieve the average price for, in RFC3339 format (e.g. 2023-03-18T01:23:45+08:00)",
+                        "name": "to",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the average price of the token",
+                        "schema": {
+                            "$ref": "#/definitions/api.AvgPriceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Returns an error if the request is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/price": {
+            "get": {
+                "description": "Retrieves the most recent price of a token-unit pair in the specified unit before the given timestamp",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price"
+                ],
+                "summary": "Get the price of a token-unit pair at a given timestamp",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The token part of the pair",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The unit part of the pair (default: USD)",
+                        "name": "unit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The fetch timestamp to retrieve the price for, in RFC3339 format (e.g. 2023-03-18T01:23:45+08:00) (default: current time)",
+                        "name": "timestamp",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the price of the token",
+                        "schema": {
+                            "$ref": "#/definitions/api.PriceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Returns an error if the request is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Returns 404 if the price info is not found at the given timestamp",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.AvgPriceResponse": {
+            "type": "object",
+            "properties": {
+                "avg_price": {
+                    "type": "string",
+                    "example": "1234500000000.000000 (8 extra decimal places, so it means 12345)"
+                },
+                "first_price_timestamp": {
+                    "type": "string",
+                    "example": "2023-03-18T01:23:45Z"
+                },
+                "last_price_timestamp": {
+                    "type": "string",
+                    "example": "2023-03-18T01:23:45Z"
+                },
+                "price_count": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "token": {
+                    "type": "string",
+                    "example": "BTC"
+                },
+                "unit": {
+                    "type": "string",
+                    "example": "USD"
+                }
+            }
+        },
+        "api.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.PriceResponse": {
+            "type": "object",
+            "properties": {
+                "fetch_timestamp": {
+                    "type": "string",
+                    "example": "2023-03-18T01:23:45Z"
+                },
+                "price": {
+                    "type": "string",
+                    "example": "1234500000000.000000 (8 extra decimal places, so it means 12345)"
+                },
+                "price_timestamp": {
+                    "type": "string",
+                    "example": "2023-03-18T01:23:45Z"
+                },
+                "token": {
+                    "type": "string",
+                    "example": "BTC"
+                },
+                "unit": {
+                    "type": "string",
+                    "example": "USD"
+                }
+            }
+        }
+    }
+}

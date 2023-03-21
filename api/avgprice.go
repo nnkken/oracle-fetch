@@ -21,12 +21,12 @@ type AvgPriceRequest struct {
 }
 
 type AvgPriceResponse struct {
-	Token               string    `json:"token"`
-	Unit                string    `json:"unit"`
-	AvgPrice            string    `json:"avg_price"`
-	PriceCount          uint      `json:"price_count"`
-	FirstFetchTimestamp time.Time `json:"first_price_timestamp"`
-	LastFetchTimestamp  time.Time `json:"last_price_timestamp"`
+	Token               string    `json:"token" example:"BTC"`
+	Unit                string    `json:"unit" example:"USD"`
+	AvgPrice            string    `json:"avg_price" example:"1234500000000.000000 (8 extra decimal places, so it means 12345)"`
+	PriceCount          uint      `json:"price_count" example:"10"`
+	FirstFetchTimestamp time.Time `json:"first_price_timestamp" example:"2023-03-18T01:23:45Z"`
+	LastFetchTimestamp  time.Time `json:"last_price_timestamp" example:"2023-03-18T01:23:45Z"`
 }
 
 func ParseAvgPriceRequest(c *gin.Context) (AvgPriceRequest, error) {
@@ -42,10 +42,21 @@ func ParseAvgPriceRequest(c *gin.Context) (AvgPriceRequest, error) {
 	return req, nil
 }
 
+// @Summary Get the average price of a token-unit pair over a time range
+// @Description Retrieves the average price of a token-unit pair over the given time range
+// @Tags price
+// @Produce  json
+// @Param token query string true "The token part of the pair"
+// @Param unit query string false "The unit part of the pair (default: USD)"
+// @Param from query string true "The start of the time range to retrieve the average price for, in RFC3339 format (e.g. 2023-03-18T01:23:45+08:00)"
+// @Param to query string true "The end of the time range to retrieve the average price for, in RFC3339 format (e.g. 2023-03-18T01:23:45+08:00)"
+// @Success 200 {object} AvgPriceResponse "Returns the average price of the token"
+// @Failure 400 {object} ErrorResponse "Returns an error if the request is invalid"
+// @Router /avg_price [get]
 func HandleAvgPriceRequest(c *gin.Context) {
 	req, err := ParseAvgPriceRequest(c)
 	if err != nil {
-		c.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(400, Error(err))
 		return
 	}
 	res, err := QueryAvgPrice(req, GetConn(c))
