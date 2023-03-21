@@ -58,6 +58,7 @@ func (s *ChainLinkETHSource) Fetch() ([]db.DBEntry, error) {
 		Price:          utils.NormalizePrice(res.Answer, s.Decimals),
 		PriceTimestamp: time.Unix(res.UpdatedAt.Int64(), 0).UTC(),
 		FetchTimestamp: utils.TimeNow().UTC(),
+		Source:         "chainlink-eth",
 	}
 	return []db.DBEntry{dbEntry}, nil
 }

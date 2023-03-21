@@ -41,6 +41,7 @@ func TestChainLinkETHSource(t *testing.T) {
 		Price:          big.NewInt(1e10),
 		PriceTimestamp: time.Unix(1234567890, 0).UTC(),
 		FetchTimestamp: utils.TimeNow().UTC(),
+		Source:         "chainlink-eth",
 	}, dbEntries[0])
 	mockCall.Unset()
 
@@ -66,6 +67,7 @@ func TestChainLinkETHSource(t *testing.T) {
 		Price:          big.NewInt(1e8),
 		PriceTimestamp: time.Unix(1234567890, 0).UTC(),
 		FetchTimestamp: utils.TimeNow().UTC(),
+		Source:         "chainlink-eth",
 	}, dbEntries[0])
 	mockCall.Unset()
 
@@ -85,6 +87,7 @@ func TestChainLinkETHSource(t *testing.T) {
 		Price:          big.NewInt(1e12),
 		PriceTimestamp: time.Unix(1234567890, 0).UTC(),
 		FetchTimestamp: utils.TimeNow().UTC(),
+		Source:         "chainlink-eth",
 	}, dbEntries[0])
 	mockCall.Unset()
 }

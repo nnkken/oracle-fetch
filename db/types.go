@@ -13,5 +13,5 @@ type DBEntry struct {
 	Price          *big.Int
 	PriceTimestamp time.Time
 	FetchTimestamp time.Time
-	// TODO: metadata (JSON?)
+	Source         string
 }

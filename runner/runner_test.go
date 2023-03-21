@@ -22,6 +22,7 @@ var testEntries = []db.DBEntry{
 		Price:          big.NewInt(1234),
 		PriceTimestamp: time.Date(2010, 1, 1, 0, 0, 0, 0, time.UTC),
 		FetchTimestamp: time.Date(2010, 1, 1, 0, 0, 1, 0, time.UTC),
+		Source:         "test-source-1",
 	},
 	{
 		Token:          "TEST-2",
@@ -29,6 +30,7 @@ var testEntries = []db.DBEntry{
 		Price:          big.NewInt(5678),
 		PriceTimestamp: time.Date(2010, 1, 1, 0, 0, 1, 0, time.UTC),
 		FetchTimestamp: time.Date(2010, 1, 1, 0, 0, 2, 0, time.UTC),
+		Source:         "test-source-2",
 	},
 }
 
@@ -40,7 +42,7 @@ func TestInsert(t *testing.T) {
 	Insert(testEntries[1], conn, zap.S())
 
 	rows, err := conn.Query(context.Background(), `
-		SELECT token, unit, price, price_timestamp, fetch_timestamp
+		SELECT token, unit, price, price_timestamp, fetch_timestamp, source
 		FROM prices
 		WHERE fetch_timestamp >= $1
 		ORDER BY id
@@ -50,7 +52,7 @@ func TestInsert(t *testing.T) {
 	require.True(t, hasNextRow)
 	var rowEntry db.DBEntry
 	var priceStr string
-	err = rows.Scan(&rowEntry.Token, &rowEntry.Unit, &priceStr, &rowEntry.PriceTimestamp, &rowEntry.FetchTimestamp)
+	err = rows.Scan(&rowEntry.Token, &rowEntry.Unit, &priceStr, &rowEntry.PriceTimestamp, &rowEntry.FetchTimestamp, &rowEntry.Source)
 	require.NoError(t, err)
 	priceFloat, _, err := new(big.Float).Parse(priceStr, 10)
 	require.NoError(t, err)
@@ -60,7 +62,7 @@ func TestInsert(t *testing.T) {
 	require.Equal(t, testEntries[0], rowEntry)
 	hasNextRow = rows.Next()
 	require.True(t, hasNextRow)
-	err = rows.Scan(&rowEntry.Token, &rowEntry.Unit, &priceStr, &rowEntry.PriceTimestamp, &rowEntry.FetchTimestamp)
+	err = rows.Scan(&rowEntry.Token, &rowEntry.Unit, &priceStr, &rowEntry.PriceTimestamp, &rowEntry.FetchTimestamp, &rowEntry.Source)
 	require.NoError(t, err)
 	priceFloat, _, err = new(big.Float).Parse(priceStr, 10)
 	require.NoError(t, err)
